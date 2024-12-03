@@ -81,7 +81,6 @@ faith_list = ["kista","panter","panter","panter","panter","panter","alligator","
 #Gameloop
 
 while True:
-    print(player.xp)
     if player.health <= 0:
         print("Vad händer, det blir ljust, du förblöder! Du dog!")
         break
@@ -115,8 +114,8 @@ while True:
 
         time.sleep(3)
         direction = input(öppningar[random.randint(0,len(öppningar)-1)]).lower()
-        left = faith_list[0]
-        straight = faith_list[random.randint(6,7)]
+        left = faith_list[random.randint(0,len(faith_list)-1)]
+        straight = faith_list[random.randint(0,len(faith_list)-1)]
         right = faith_list[random.randint(0,len(faith_list)-1)]
         while True:
             if direction == "vänster":
@@ -213,7 +212,7 @@ while True:
             if player.strength > enemy_strength:
                 time.sleep(2)
                 print("Du tog kol på den där alligatorn, du fick 1 guld mynt och", enemy_strength, "xp")
-                player.xp = player.xp+50
+                player.xp = player.xp+enemy_strength
             elif player.strength < enemy_strength and rustning_in_use == True:
                 print("Alligatorn bet sönder din rustning men du kom iväg säkert!")
                 player.inventory.remove("en rustning")
