@@ -1,33 +1,34 @@
-#Te23A, Hampus Melin Österlind, Hannes Park Brandberg och Jacob Norsell.
-
 import time
 import random
 open_inventory = False
 rustning_in_use = False
 sword_in_use = False
+adrenalin = False
+boost = 0
 
 class player:
     strength = 50
     xp = 0
     level = 0
     health = 10
+    mynt = 0
     inventory = []
 
 class item:
     svärd = player.strength+15
     apa = 4
-    adrenalineshot = player.health+1
+    adrenalinshot = player.strength+20
     rustning = 1
     bandage = player.health+2
 
 
-item_list = ["en fälla","en apa", "en adrenalinshot", "en rustning", "ett bandage","ett svärd"]
+item_list = ["en fälla","en apa", "ett adrenalinshot", "en rustning", "ett bandage","ett svärd"]
 trap_list = ["stealing trap","damage trap"]
 
 #Level system
-level_gränser = [30, 60, 100, 150, 210, 280, 360, 450, 600, 0]
+level_gränser = [30, 60, 100, 150, 210, 280, 360, 450, 600]
 def vilken_level(xp):
-    for i in range(0,len(level_gränser)-1):
+    for i in range(0,len(level_gränser)):
         if xp >= level_gränser[i]:
             player.level = i+2
     return player.level
@@ -61,32 +62,40 @@ print("Du är fast i en djungel. Du ser en öppning framför dig!")
 val = input("Vill du gå igenom öppningen? --> ").lower()
 if val == "ja":
     print("Du sprang in i ett monster. försök döda det!")
-    time.sleep(3)
+    time.sleep(1.5)
     print("Du dödade monstret och gick därför upp en level.")
+    time.sleep(1.5)
     print("Du hamnade i djungel och monstret blockarar utgången, Du måste fortsätta in i djungeln")
     player.level = player.level+1
 if val == "nej":
     print("Det börjar brinna bakom dig du måste springa igenom öppningen.")
-    time.sleep(3)
+    time.sleep(1.5)
     print("Du sprang in i ett monster. försök döda det!")
-    time.sleep(3)
-    print("Du dödade monstret och gick därför upp en level.")
     time.sleep(2)
+    print("Du dödade monstret och gick därför upp en level.")
+    time.sleep(1.5)
     print("Du hamnade i djungel och monstret blockarar utgången, Du måste fortsätta in i djungeln")
     player.level = player.level+1
 
 öppningar = ["Du ser ytterligare tre öppningar framför dig vilket håll vill du gå åt, höger, vänster eller rakt fram? Du kan också skriva i för att öppna förrådet--> ","Du ser en grotta till vänster, ett tempel till höger och ett dimmigt vattenfall rakt fram. Vilket håll vill du gå åt, höger, vänster eller rakt fram? Du kan också skriva i för att öppna förrådet --> " ]
-faith_list = ["kista","panter","panter","panter","panter","panter","alligator","alligator","alligator","alligator","alligator","stammfolk","stammfolk","stammfolk","stammfolk","stammfolk","kista","kista","kista","kista","kista","kista","kista","kista","kista","kista","kista","fälla","fälla","fälla","fälla","fälla","fälla","fälla","fälla"]
+faith_list = ["panter","panter","panter","panter","panter","alligator","alligator","alligator","alligator","alligator","stammfolk","stammfolk","stammfolk","stammfolk","stammfolk","kista","kista","kista","kista","kista","kista","fälla","fälla","fälla","fälla","fälla",]
 
 #Gameloop
 
 while True:
+    print(player.strength)
+    if adrenalin == True and boost == 3:
+        player.strength = player.strength+item.adrenalinshot
+    elif adrenalin == True and boost == 0:
+        player.strength = player.strength-20
+    
+
     if player.health <= 0:
         print("Vad händer, det blir ljust, du förblöder! Du dog!")
         break
     elif player.level == 10:
         print("Du börjar se ljuset, Du ser en sista utväg. Du springer in mellan två stenmurar, du känner en hård smäll på kinden. Du kollar upp och ser en stor stenjätte.")
-        time.sleep(4)
+        time.sleep(3)
         print("Du måste döda jätten!")
         time.sleep(2)
         print("Slå honom genom att trycka på enterknappen.")
@@ -102,6 +111,9 @@ while True:
         print("1!")
         boss_fight()
         break
+
+    #Level
+
     else:
         gamla_level = player.level
         ny_level = vilken_level(player.xp)
@@ -145,7 +157,7 @@ while True:
                             if interact == "ja":
                                 do = input("Skriv platsen som ditt föremål ligger i förrådet --> ")
                                 while True:
-                                    if do == "1" or do == "2" or do == "3" or do == "4" or do == "5":
+                                    if do in ["1","2","3","4","5"]:
                                         do = int(do)-1
                                         if do <= len(player.inventory)-1:
                                             use = player.inventory[do]
@@ -171,6 +183,12 @@ while True:
                                             elif use == "en rustning" and rustning_in_use == True:
                                                 print("Du har redan en rustning på dig")
                                                 break
+                                            elif use == "ett adrenalinshot":
+                                                print("Du drack en adrenalinshot och känner styrkan pumpa i dina veins")
+                                                player.inventory.pop(do)
+                                                adrenalin = True
+                                                boost = 3
+                                                break
                                         else:
                                             print("Du har ingenting på den positionen")
                                             break
@@ -178,11 +196,11 @@ while True:
                                         do = input("Du måste skriva ett tal mellan 1 och 5 --> ")
                                 break
                             elif interact == "nej":
-                                print("okej då säger vi så! ")
+                                print("Okej då säger vi så! ")
                                 break
                             else:
                                 interact = input("Du måste svara ja eller nej! ").lower()
-                            
+                        break   
                 direction = input("Skriv vilket håll du vill gå åt när du har kollat klart --> ").lower()
                 open_inventory = False
                 break
@@ -191,11 +209,12 @@ while True:
         #Fiender, Kistor och fällor.
         if faith == "panter":
             print("Du stötte på en vild panther! Döda den!")
-            enemy_strength = random.randint(30,70)
+            enemy_strength = random.randint(30,65)
             time.sleep(2)
             if player.strength > enemy_strength:
                 print("Du dödade pantern, du fick 3 guld mynt och",enemy_strength,"xp")
                 player.xp = player.xp+enemy_strength
+                player.mynt = player.mynt+3
             elif player.strength < enemy_strength and rustning_in_use == True:
                 print("Panterna bet sönder din rustning men du kom iväg säkert!")
                 player.inventory.remove("en rustning")
@@ -207,12 +226,13 @@ while True:
                 print("Du tog ut en köttbit ur fickan och lurade bort pantern!")
         elif faith == "alligator":
             print("Du stötte på en alligator! Döda den!")
-            enemy_strength = random.randint(0,60)
+            enemy_strength = random.randint(1,60)
             time.sleep(2)
             if player.strength > enemy_strength:
                 time.sleep(2)
                 print("Du tog kol på den där alligatorn, du fick 1 guld mynt och", enemy_strength, "xp")
                 player.xp = player.xp+enemy_strength
+                player.mynt = player.mynt+1
             elif player.strength < enemy_strength and rustning_in_use == True:
                 print("Alligatorn bet sönder din rustning men du kom iväg säkert!")
                 player.inventory.remove("en rustning")
@@ -229,6 +249,7 @@ while True:
             if player.strength > enemy_strength:
                 print("Du visade de där stammfolket vad du går för, snyggt!","du fick 5 guld mynt och", enemy_strength, "xp" )
                 player.xp = player.xp+enemy_strength
+                player.mynt = player.mynt+5
             elif player.strength < enemy_strength and rustning_in_use == True:
                 print("Stamfolket tog sönder din rustning men du kom iväg säkert!")
                 player.inventory.remove("en rustning")
@@ -248,8 +269,8 @@ while True:
                 player.inventory.remove("en rustning")
             else:
                 print("Du tappade 1 hp!")
-                print("Nu har du bara",player.health,"Hp kvar!")
                 player.health = player.health-1
+                print("Nu har du bara",player.health,"Hp kvar!")
         elif faith == "kista":
             innehåll = item_list[random.randint(0,len(item_list)-1)]
             öppna = input("Du hittade en kista vill du öpnna den eller gå vidare? Svara ja om du vill öppna den och nej om du inte vill gå vidare. --> ").lower()
@@ -261,7 +282,7 @@ while True:
                     print("Du hittade", innehåll, "i kistan!")
                     if innehåll == "en fälla":
                         trap = trap_list[random.randint(0,len(trap_list)-1)]
-                        if trap == "damage trap" or len(player.inventory) == 0 and rustning_in_use == True:
+                        if trap == "damage trap" and rustning_in_use == True:
                             print("Kistan sprängdes och din rustning gick sönder men du kom iväg säkert!")
                             player.inventory.remove("en rustning")
                         elif trap == "damage trap" or len(player.inventory) == 0:
@@ -271,7 +292,7 @@ while True:
                         elif trap == "stealing trap":
                             print("En talande orm sa åt dig att ge honom ett föremål annars äter han upp dig!")
                             snott_föremål = random.randint(0,len(player.inventory)-1)
-                            print("Ormen slinker iväg efter du gav bort", player.inventory[snott_föremål],"till honom")
+                            print("Ormen slinker iväg efter med", player.inventory[snott_föremål],"som du gav till honom med tårar i ögonen.")
                             if player.inventory[snott_föremål] == "ett svärd":
                                 sword_in_use = False
                                 player.strength = player.strength-15
