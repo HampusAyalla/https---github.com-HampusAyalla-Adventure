@@ -197,6 +197,12 @@ faith_list = ["panter","panter","panter","panter","panter","panter","panter","al
 #Gameloop
 while True:
 
+    old_level = player.level
+    new_level = vilken_level(player.xp)
+    if new_level > old_level:
+        print("Du gick upp i level", new_level,"!","Snyggt jobbat!")
+        player.level = new_level 
+
     if adrenalin == True and boost == 0:
         print("Adrenalinet i ditt blod börjar minska och du gör nu din vanliga skada igen!")
         adrenalin = False
@@ -240,7 +246,7 @@ while True:
         time.sleep(3)
         direction = input(opening_list[random.randint(0,len(opening_list)-1)]).lower().strip()
         left = faith_list[random.randint(0,len(faith_list)-1)]
-        straight = faith_list[random.randint(0,len(faith_list)-1)]
+        straight = faith_list[random.randint(0,len(faith_list-1))]
         right = faith_list[random.randint(0,len(faith_list)-1)]
         while True:
             if direction == "v" or direction == "vänster":
@@ -342,7 +348,7 @@ while True:
         #Fiender, Kistor och fällor.
         if faith == "panter":
             print("Du stötte på en vild panther! Döda den!")
-            enemy_strength = random.randint(45,75)
+            enemy_strength = random.randint(40,75)
             time.sleep(2)
             if player.strength > enemy_strength:
                 print("Du dödade pantern, du fick 3 guld mynt och",enemy_strength,"xp")
@@ -379,7 +385,7 @@ while True:
                 print("Du hopppade på alligatorns huvud och kom förbi oskadd.")
         elif faith == "stammfolk":
             print("Några stammfolk ringar in dig i ett hörn! Visa dem vad du kan!")
-            enemy_strength = random.randint(60,100)
+            enemy_strength = random.randint(50,90)
             time.sleep(2)
             if player.strength > enemy_strength:
                 print("Du visade de där stammfolket vad du går för, snyggt!","du fick 5 guld mynt och", enemy_strength, "xp" )
