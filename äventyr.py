@@ -246,7 +246,7 @@ while True:
         time.sleep(3)
         direction = input(opening_list[random.randint(0,len(opening_list)-1)]).lower().strip()
         left = faith_list[random.randint(0,len(faith_list)-1)]
-        straight = faith_list[random.randint(0,len(faith_list-1))]
+        straight = faith_list[random.randint(0,len(faith_list)-1)]
         right = faith_list[random.randint(0,len(faith_list)-1)]
         while True:
             if direction == "v" or direction == "vänster":
