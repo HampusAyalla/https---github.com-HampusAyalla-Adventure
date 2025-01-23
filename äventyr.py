@@ -12,6 +12,7 @@ monkey_dead = False
 stay = True 
 stay2 = True
 removed_item = "no"
+zeus_in_use = False
 
 class player:
     strength = 50
@@ -107,16 +108,19 @@ def boss_fight():
     start_time = time.time()
     
     while True:
+        stay3 = True
+        stay4 = True
         elapsed_time = time.time() - start_time
-        if elapsed_time > time_limit:
+        if elapsed_time > time_limit and clicks < target_clicks:
             print("Stenjätten tog dig i sin hand, förde dig mot sin mun och bet av ditt huvud!")
             break
-        
+
         input()
         clicks += 1
         print("Klick:",clicks,"/",target_clicks)
         
         if clicks >= target_clicks:
+            elapsed_time = 0
 
             if monkey_dead == True:
                 print("Stenjätten faller till sin död och du ser en utväg.")
@@ -129,12 +133,19 @@ def boss_fight():
                 time.sleep(2)
                 print("Eller så accepterar du djungelns öde och lämnar den och alla minnen bakom dig.")
                 choice2 = input("Stannar du i djungel(s) eller lämnar du allt bakom dig(b)?").lower().strip()
-                if choice2 == "b":
-                    time.sleep(2)
-                    print("Du tar ett djupt andetag, säger förlåt till din apa med tårar som rinner ner för ditt ansikte och du tar ditt första steg ut från djungeln.")
-                elif choice2 == "s":
-                    time.sleep(2)
-                    print("Du ser dig omkring, apans själ kollar dig stolt i ögonen och du tar över rollen som djungeln beskyddare!")
+                while stay3 == True:
+                    if choice2 == "b":
+                        time.sleep(2)
+                        print("Du tar ett djupt andetag, säger förlåt till din apa med tårar som rinner ner för ditt ansikte och du tar ditt första steg ut från djungeln.")
+                        stay3 = False
+                        break
+                    elif choice2 == "s":
+                        time.sleep(2)
+                        print("Du ser dig omkring, apans själ kollar dig stolt i ögonen och du tar över rollen som djungeln beskyddare!")
+                        stay3 = False
+                        break
+                    else:
+                        choice2 = input("Svara med s eller b --> ").lower().strip()
             elif monkey_on_the_back == True:
                 print("Stenjätten faller till sin död och du ser en utväg.")
                 time.sleep(2)
@@ -147,24 +158,33 @@ def boss_fight():
                 print("Eller så tar du det röda pillret och går här ifrån som om inget har hänt och lämnar din apa som djungelns beskyddare!")
                 time.sleep(2)
                 choice3 = input("Väljer du det blå pillret(b) eller det röda pilret(r)?").lower().strip()
-                if choice3 == "b":
-                    time.sleep(2)
-                    print("Du ser dig omkring, tar in djungelns andar, apan hoppar upp på din axel och du tar över rollen som djungeln beskyddare!")
-                elif choice3 == "r":
-                    time.sleep(2)
-                    print("Du tar ett djupt andetag, tackar din apa för all fina minnen och er vänskap, visar hur stolt du är över honom och tar ditt första steg närmare ditt hem.")
+                while stay4 == True:
+                    if choice3 == "b":
+                        time.sleep(2)
+                        print("Du ser dig omkring, tar in djungelns andar, apan hoppar upp på din axel och du tar över rollen som djungeln beskyddare!")
+                        stay4 = False
+                        break
+                    elif choice3 == "r":
+                        time.sleep(2)
+                        print("Du tar ett djupt andetag, tackar din apa för all fina minnen och er vänskap, visar hur stolt du är över honom och tar ditt första steg närmare ditt hem.")
+                        stay4 = False
+                        break   
+                    else:
+                        choice2 = input("Svara med r eller b --> ").lower().strip()
             elif choice1 == "nej":
                 print("Stenjätten faller till sin död och du ser din utgväg, men just då ser du hur elden har spridit sig som en magisk cirkel runt hela jungeln och du måste gå tillbaka")
                 time.sleep(1)
                 print("Du inser att du är fast och aldrig kommer ta dig ut!")
+                break
             else:
                 print("Stenjätten faller till sin död och du ser din utväg")
                 time.sleep(1)
                 print("Du tar dig en titt runt jungeln och tänker på allt du åstadkommit")
                 time.sleep(1)
                 print("Men du tar dig lånsamt till utgången och inser att du är fri!")
+                break
 
-                return
+            return
         
 # Inledning/tutorial 
 print("Du är fast i en djungel. Du ser en öppning framför dig!")
@@ -319,16 +339,22 @@ while True:
                                                 player.strength = strengthchange(item.adrenalinshot,player.strength)
                                                 player.inventory.remove("ett adrenalinshot(20str i 3 rundor)")
                                                 break
+                                            elif use == "en apa(1.5str/runda)" and monkey_on_the_back == True:
+                                                print("Lugn i stormen apan är redan på din rygg din dummer!")
+                                                break
                                             elif use == "en apa(1.5str/runda)":
                                                 print("Apan hoppade upp på din rygg och kommer nu hjälpa dig slåss. Han lär sig av att se dig slås!")
                                                 monkey_on_the_back = True
                                                 player.strength = strengthchange(item.monkey,player.strength)
                                                 monkey_strength = 1.5
                                                 break
+                                            elif use == "Zeuz åskvigg(25str och 3hp)" and zeus_in_use == True:
+                                                print("Åskviggen är redan på maxstyrka.")
                                             elif use == "Zeuz åskvigg(25str och 3hp)":
                                                 print("Du tar upp Zeus åskvigg och känner blixten stråla. Du har nu ökat din styrka med 25 och ditt Hp med 10!")
                                                 player.strength = strengthchange(25,player.strength)
                                                 player.health = damage(-3,player.health)
+                                                zeus_in_use = True
                                         else:
                                             print("Du har ingenting på den positionen")
                                             break
@@ -458,7 +484,8 @@ while True:
                             player.strength = strengthchange(-25,player.strength)
                             player.health = damage(3)
                             print("Du tappar styrkan av Zeus därför har du tappat 25 styrka och 3 Hp")
-                            print("Nu har du bara ",player.health," Hp och ", player.strength, " styrka.") 
+                            print("Nu har du bara ",player.health," Hp och ", player.strength, " styrka.")
+                            zeus_in_use = False 
                             break
                         else:
                             removed_item = "no"
@@ -506,6 +533,7 @@ while True:
                                 player.health = damage(3)
                                 print("Du tappar styrkan av Zeus därför har du tappat 25 styrka och 3 Hp")
                                 print("Nu har du bara ",player.health," Hp och ", player.strength, " styrka.")
+                                zeus_in_use = False
                             player.inventory.pop(stolen_item)    
                     elif len(player.inventory) < 5:
                         print("Föremålet har lagts in i ditt förråd")
@@ -536,6 +564,7 @@ while True:
                                     player.health = damage(3)
                                     print("Du tappar styrkan av Zeus därför har du tappat 25 styrka och 3 Hp")
                                     print("Nu har du bara ",player.health," Hp och ", player.strength, " styrka.")
+                                    zeus_in_use = False
                                     break
                                 else:
                                     break  
